@@ -10,24 +10,36 @@ type Result = aggregate.Result[*State]
 
 func RegisterVehicle(vehicleId string, model string) (Result, error) {
 
-	result := aggregate.NewResult(&State{})
+	var result = aggregate.NewResult(&State{})
 
-	return result.Apply(&VehicleRegistered{
+	var err = result.Apply(&VehicleRegistered{
 		VehicleId: vehicleId,
 		Model:     model,
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func AdjustMaxSpeed(state *State, maxSpeed int32) (Result, error) {
 
-	result := aggregate.NewResult(state)
+	var result = aggregate.NewResult(state)
 
 	if maxSpeed <= 0 {
-		return result, errors.New("max speed must be greater than 0")
+		return nil, errors.New("max speed must be greater than 0")
 	}
 
-	return result.Apply(&VehicleMaxSpeedAdjusted{
+	var err = result.Apply(&VehicleMaxSpeedAdjusted{
 		VehicleId: state.VehicleId,
 		MaxSpeed:  maxSpeed,
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
