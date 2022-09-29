@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package itgram.tracking.vehicle.commands;
+
+option go_package = "github.com/itgram/tracking_api/vehicle";
+
+message RegisterVehicle {
+  string vehicle_id = 1;
+  string model = 2;
+}
+
+message AdjustMaxSpeedVehicle {
+  string vehicle_id = 1;
+  int32 max_speed = 2;
+}

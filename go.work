@@ -1,0 +1,21 @@
+go 1.19
+
+use ../minion
+
+use ../minion.encoding
+
+use ../minion.encoding.protobuf
+
+use ../minion.persistence
+
+use ../minion.persistence.cassandra
+
+use ../minion.persistence.esdb
+
+use ../minion.system
+
+use ./api
+
+use ./domain
+
+use ./service

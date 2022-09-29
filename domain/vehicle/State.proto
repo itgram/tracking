@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package itgram.tracking.vehicle;
+
+option go_package = "github.com/itgram/tracking_domain/vehicle";
+
+message State {
+  string vehicle_id = 1;
+  string model = 2;
+  int32 max_speed = 3;
+}
