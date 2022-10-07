@@ -31,20 +31,32 @@ services:
       - "8600:8600/udp"
     command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
 
-  some-scylla:
-    image: scylladb/scylla
-    container_name: some-scylla
-    ports: [ "9042:9042" ]
+  eventstore.db:
+    image: ghcr.io/eventstore/eventstore:21.10.8-alpha-arm64v8
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=false
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1113:1113"
+      - "2113:2113"
+    volumes:
+      - type: volume
+        source: eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: eventstore-volume-logs
+        target: /var/log/eventstore
 
-  some-scylla2:
-    image: scylladb/scylla
-    container_name: some-scylla2
-    command: --seeds=some-scylla
+volumes:
+  eventstore-volume-data:
+  eventstore-volume-logs:
 
-  some-scylla3:
-    image: scylladb/scylla
-    container_name: some-scylla3
-    command: --seeds=some-scylla
 
 networks:
   consul:

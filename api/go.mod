@@ -9,6 +9,7 @@ replace github.com/itgram/minion.persistence => ../../minion.persistence
 replace github.com/itgram/minion.system => ../../minion.system
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/itgram/minion.system v0.0.0-00010101000000-000000000000
 	google.golang.org/protobuf v1.28.1
 )
@@ -26,7 +27,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/consul/api v1.12.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.2.0 // indirect

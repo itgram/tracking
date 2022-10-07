@@ -1,4 +1,5 @@
 CUR_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+ESDB_DIR := $(shell go list -m -f "{{.Dir}}" github.com/EventStore/EventStore-Client-Go/v3)
 
 $(if $(shell go version),,$(error "warning: golang not exists in your path, this will probably not work"))
 
@@ -19,7 +20,12 @@ deps:; -@cd src/ && go get -d -v
 
 # check for stack/heap escape
 # check: go build -gcflags="-m -l"
-check: go build -gcflags="-m=2 -l"
+check:; go build -gcflags="-m=2 -l"
+
+# fix the "proto: file "gossip.proto" is already registered" error
+# using "go-proto-filename-prefixer"
+# go install github.com/tuimeo/go-proto-filename-prefixer@latest
+fix:; go-proto-filename-prefixer $(ESDB_DIR)/protos esdb.
 
 help:; @printf "%s\n" \
 	"application makefile help" \

@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/itgram/minion.encoding.protobuf/protobuf"
-	"github.com/itgram/minion.persistence.cassandra/cassandra"
+	"github.com/itgram/minion.encoding.protobuf/json"
+	"github.com/itgram/minion.persistence.esdb/esdb"
 	"github.com/itgram/minion.persistence/persistence"
 	"github.com/itgram/minion.system/system"
 	"github.com/itgram/minion.system/system/strategy"
@@ -23,9 +23,9 @@ func main() {
 	var _, cancel = context.WithCancel(
 		context.Background())
 
-	conn := cassandra.NewConnection(
-		"minion_db",
-		cassandra.WithHosts("localhost:9042"))
+	conn := esdb.NewConnection(
+		"esdb://127.0.0.1:2113?tls=false",
+		esdb.WithAuthentication("admin", "changeit"))
 
 	var err = conn.Connect()
 	if err != nil {
@@ -37,20 +37,19 @@ func main() {
 
 	var server = system.NewServer()
 
-	var serializer = protobuf.NewSerializer()
-	var firstBucketTime time.Time = time.Now() // NB:
+	var serializer = json.NewSerializer()
 	var partitionSize uint64 = 4
 
 	system.RegisterCommandHandler(server,
 		"vehicle",
-		func() *vehicle.State { return &vehicle.State{} },
+		partitionSize,
 		v.CommandHandler,
 		func(text string) { fmt.Println(text) },
-		func() *persistence.Repository[*vehicle.State] {
-			return persistence.NewRepository[*vehicle.State](
-				partitionSize,
-				conn.NewJournalStore(firstBucketTime, 20, serializer),
-				conn.NewSnapshotStore(2, serializer))
+		func() persistence.Repository[*vehicle.State] {
+			return persistence.NewRepository(
+				conn.NewJournalStore(3, serializer),
+				conn.NewSnapshotStore(2, serializer),
+				&vehicle.State{})
 		},
 		func() strategy.Strategy { return strategy.NewSnapshotStrategy(strategy.WithMaxEventCount(10)) },
 		func() time.Duration { return 30 * time.Second },

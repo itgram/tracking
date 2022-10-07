@@ -8,8 +8,6 @@ use ../minion.encoding.protobuf
 
 use ../minion.persistence
 
-use ../minion.persistence.cassandra
-
 use ../minion.persistence.esdb
 
 use ../minion.system
