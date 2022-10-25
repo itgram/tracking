@@ -13,3 +13,7 @@ message VehicleMaxSpeedAdjusted {
   string vehicle_id = 1;
   int32 max_speed = 2;
 }
+
+message AckEvent {
+  bool Success = 1;
+}

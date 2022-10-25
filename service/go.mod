@@ -2,27 +2,28 @@ module github.com/itgram/tracking_service
 
 go 1.19
 
-replace github.com/itgram/minion => ../../minion
+replace github.com/itgram/green => ../../green
 
-replace github.com/itgram/minion.encoding => ../../minion.encoding
+replace github.com/itgram/green.encoding => ../../green.encoding
 
-replace github.com/itgram/minion.encoding.protobuf => ../../minion.encoding.protobuf
+replace github.com/itgram/green.encoding.protobuf => ../../green.encoding.protobuf
 
-replace github.com/itgram/minion.persistence => ../../minion.persistence
+replace github.com/itgram/green.persistence => ../../green.persistence
 
-replace github.com/itgram/minion.persistence.esdb => ../../minion.persistence.esdb
+replace github.com/itgram/green.persistence.esdb => ../../green.persistence.esdb
 
-replace github.com/itgram/minion.system => ../../minion.system
+replace github.com/itgram/green.system => ../../green.system
 
 replace github.com/itgram/tracking_domain => ../domain
 
 replace github.com/itgram/tracking_service => ./
 
 require (
-	github.com/itgram/minion.encoding.protobuf v0.0.0-00010101000000-000000000000
-	github.com/itgram/minion.persistence v0.0.0-00010101000000-000000000000
-	github.com/itgram/minion.persistence.esdb v0.0.0-00010101000000-000000000000
-	github.com/itgram/minion.system v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.encoding v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.encoding.protobuf v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.persistence.esdb v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.system v0.0.0-00010101000000-000000000000
 	github.com/itgram/tracking_domain v0.0.0-00010101000000-000000000000
 	google.golang.org/protobuf v1.28.1
 )
@@ -32,7 +33,7 @@ require (
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
 	github.com/asynkron/gofun v0.0.0-20220329210725-34fed760f4c2 // indirect
-	github.com/asynkron/protoactor-go v0.0.0-20220910074408-d2ceff064d72 // indirect
+	github.com/asynkron/protoactor-go v0.0.0-20221002142108-880b460fcd1f // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
@@ -50,8 +51,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.8 // indirect
-	github.com/itgram/minion v0.0.0-00010101000000-000000000000 // indirect
-	github.com/itgram/minion.encoding v0.0.0-00010101000000-000000000000 // indirect
+	github.com/itgram/green v0.0.0-00010101000000-000000000000 // indirect
 	github.com/lithammer/shortuuid/v4 v4.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -73,6 +73,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.7.0 // indirect
 	golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf // indirect
 	golang.org/x/net v0.0.0-20220526153639-5463443f8c37 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220526192754-51939a95c655 // indirect

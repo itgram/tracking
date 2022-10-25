@@ -3,7 +3,7 @@ package vehicle
 import (
 	"errors"
 
-	"github.com/itgram/minion/aggregate"
+	"github.com/itgram/green/aggregate"
 )
 
 type Result = aggregate.Result[*State]
@@ -28,7 +28,7 @@ func AdjustMaxSpeed(state *State, maxSpeed int32) (Result, error) {
 
 	var result = aggregate.NewResult(state)
 
-	if maxSpeed <= 0 {
+	if maxSpeed >= 230 {
 		return nil, errors.New("max speed must be greater than 0")
 	}
 

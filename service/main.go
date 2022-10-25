@@ -6,15 +6,15 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
-	"github.com/itgram/minion.encoding.protobuf/json"
-	"github.com/itgram/minion.persistence.esdb/esdb"
-	"github.com/itgram/minion.persistence/persistence"
-	"github.com/itgram/minion.system/system"
-	"github.com/itgram/minion.system/system/strategy"
-
+	"github.com/itgram/green.encoding.protobuf/json"
+	"github.com/itgram/green.encoding.protobuf/protobuf"
+	"github.com/itgram/green.encoding/encoding"
+	"github.com/itgram/green.persistence.esdb/esdb"
+	"github.com/itgram/green.system/system"
+	"github.com/itgram/green.system/system/grains"
 	"github.com/itgram/tracking_domain/vehicle"
+
 	v "github.com/itgram/tracking_service/vehicle"
 )
 
@@ -25,7 +25,16 @@ func main() {
 
 	conn := esdb.NewConnection(
 		"esdb://127.0.0.1:2113?tls=false",
-		esdb.WithAuthentication("admin", "changeit"))
+		esdb.WithAuthentication("admin", "changeit"),
+		esdb.WithSerialization("json", func(encoding string) encoding.Serializer {
+
+			if encoding == "json" {
+				return json.NewSerializer()
+			}
+
+			return protobuf.NewSerializer()
+		}),
+	)
 
 	var err = conn.Connect()
 	if err != nil {
@@ -35,27 +44,12 @@ func main() {
 
 	defer conn.Close()
 
-	var server = system.NewServer()
+	var server = system.NewServer(
+		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
 
-	var serializer = json.NewSerializer()
-	var partitionSize uint64 = 4
+	grains.RegisterCommandHandler(server, "vehicle", func() grains.AggregateProps[*vehicle.State] { return v.NewAggregateProps(conn) })
 
-	system.RegisterCommandHandler(server,
-		"vehicle",
-		partitionSize,
-		v.CommandHandler,
-		func(text string) { fmt.Println(text) },
-		func() persistence.Repository[*vehicle.State] {
-			return persistence.NewRepository(
-				conn.NewJournalStore(3, serializer),
-				conn.NewSnapshotStore(2, serializer),
-				&vehicle.State{})
-		},
-		func() strategy.Strategy { return strategy.NewSnapshotStrategy(strategy.WithMaxEventCount(10)) },
-		func() time.Duration { return 30 * time.Second },
-		func() time.Duration { return 30 * time.Second })
-
-	err = server.Start(system.NewClusterConfigurtion("localhost", "my_cluster", 0))
+	err = server.Start()
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		return

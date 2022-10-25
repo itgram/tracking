@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/itgram/minion.system/system"
+	"github.com/itgram/green.system/system"
 
 	"github.com/itgram/tracking_api/commands/vehicle"
 )
@@ -19,9 +19,10 @@ func main() {
 	var _, cancel = context.WithCancel(
 		context.Background())
 
-	var client = system.NewClient()
+	var client = system.NewClient(
+		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
 
-	var err = client.Start(system.NewClusterConfigurtion("localhost", "my_cluster", 0))
+	var err = client.Start()
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		return
@@ -31,27 +32,43 @@ func main() {
 
 	var vehicleId = uuid.New().String()
 	var aggregateId = "vehicle/" + vehicleId
+	var result any
 
 	fmt.Scanln()
-	client.Request(aggregateId, "vehicle", &vehicle.RegisterVehicle{
+	result, err = client.Request(aggregateId, "vehicle", &vehicle.RegisterVehicle{
 		VehicleId: vehicleId,
 		Model:     "Citreon C4",
 	}, time.Second*10)
-	fmt.Println("sent ....")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	} else {
+		fmt.Println("sent ....", result)
+	}
 
 	fmt.Scanln()
-	client.Request(aggregateId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
+	result, err = client.Request(aggregateId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
 		VehicleId: vehicleId,
 		MaxSpeed:  200,
 	}, time.Second*10)
-	fmt.Println("sent ....")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	} else {
+		fmt.Println("sent ....", result)
+	}
 
 	fmt.Scanln()
-	client.Request(aggregateId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
+	result, err = client.Request(aggregateId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
 		VehicleId: vehicleId,
 		MaxSpeed:  230,
 	}, time.Second*10)
-	fmt.Println("sent ....")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	} else {
+		fmt.Println("sent ....", result)
+	}
 
 	// Stop when a signal is sent.
 	c := make(chan os.Signal, 1)

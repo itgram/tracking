@@ -1,20 +1,29 @@
-module github.com/itgram/tracking_api
+module github.com/itgram/tracking_projection
 
 go 1.19
 
 replace github.com/itgram/green => ../../green
 
+replace github.com/itgram/green.encoding => ../../green.encoding
+
+replace github.com/itgram/green.encoding.protobuf => ../../green.encoding.protobuf
+
 replace github.com/itgram/green.persistence => ../../green.persistence
+
+replace github.com/itgram/green.persistence.esdb => ../../green.persistence.esdb
 
 replace github.com/itgram/green.system => ../../green.system
 
 require (
-	github.com/google/uuid v1.3.0
+	github.com/itgram/green.encoding v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.encoding.protobuf v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.persistence.esdb v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.system v0.0.0-00010101000000-000000000000
-	google.golang.org/protobuf v1.28.1
 )
 
 require (
+	github.com/EventStore/EventStore-Client-Go/v3 v3.0.0 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
 	github.com/asynkron/gofun v0.0.0-20220329210725-34fed760f4c2 // indirect
@@ -25,8 +34,10 @@ require (
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/gofrs/uuid v3.3.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/consul/api v1.12.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.2.0 // indirect
@@ -35,7 +46,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.8 // indirect
 	github.com/itgram/green v0.0.0-00010101000000-000000000000 // indirect
-	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000 // indirect
 	github.com/lithammer/shortuuid/v4 v4.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -62,4 +72,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220526192754-51939a95c655 // indirect
 	google.golang.org/grpc v1.46.2 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )
