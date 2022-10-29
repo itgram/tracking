@@ -47,7 +47,7 @@ func main() {
 	var server = system.NewServer(
 		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
 
-	grains.RegisterCommandHandler(server, "vehicle", func() grains.AggregateProps[*vehicle.State] { return v.NewAggregateProps(conn) })
+	grains.RegisterCommandHandler(server, "vehicle", func(kind string) grains.AggregateProps[*vehicle.State] { return v.NewAggregateProps(kind, conn) })
 
 	err = server.Start()
 	if err != nil {

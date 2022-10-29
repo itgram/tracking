@@ -14,12 +14,15 @@ replace github.com/itgram/green.persistence.esdb => ../../green.persistence.esdb
 
 replace github.com/itgram/green.system => ../../green.system
 
+replace github.com/itgram/tracking_projection => ./
+
 require (
 	github.com/itgram/green.encoding v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.encoding.protobuf v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.persistence.esdb v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.system v0.0.0-00010101000000-000000000000
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -72,5 +75,4 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220526192754-51939a95c655 // indirect
 	google.golang.org/grpc v1.46.2 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
 )

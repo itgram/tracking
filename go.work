@@ -16,4 +16,6 @@ use ./api
 
 use ./domain
 
+use ./projection
+
 use ./service

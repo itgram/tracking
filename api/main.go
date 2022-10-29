@@ -30,12 +30,11 @@ func main() {
 
 	defer client.Shutdown(true)
 
-	var vehicleId = uuid.New().String()
-	var aggregateId = "vehicle/" + vehicleId
+	var vehicleId = uuid.NewString()
 	var result any
 
 	fmt.Scanln()
-	result, err = client.Request(aggregateId, "vehicle", &vehicle.RegisterVehicle{
+	result, err = client.Request(vehicleId, "vehicle", &vehicle.RegisterVehicle{
 		VehicleId: vehicleId,
 		Model:     "Citreon C4",
 	}, time.Second*10)
@@ -47,7 +46,7 @@ func main() {
 	}
 
 	fmt.Scanln()
-	result, err = client.Request(aggregateId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
+	result, err = client.Request(vehicleId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
 		VehicleId: vehicleId,
 		MaxSpeed:  200,
 	}, time.Second*10)
@@ -59,7 +58,7 @@ func main() {
 	}
 
 	fmt.Scanln()
-	result, err = client.Request(aggregateId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
+	result, err = client.Request(vehicleId, "vehicle", &vehicle.AdjustMaxSpeedVehicle{
 		VehicleId: vehicleId,
 		MaxSpeed:  230,
 	}, time.Second*10)

@@ -16,7 +16,12 @@ import (
 	"github.com/itgram/green.persistence/persistence/flow/stream"
 	"github.com/itgram/green.system/system"
 	"github.com/itgram/green.system/system/grains"
+
+	"github.com/itgram/tracking_projection/projections"
+	_ "github.com/itgram/tracking_projection/vehicle"
 )
+
+var _projections []*grains.Projection
 
 func main() {
 
@@ -47,9 +52,16 @@ func main() {
 	var server = system.NewServer(
 		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
 
-	grains.RegisterStreamSubscription(server, "subscription_master", func() grains.SubscriptionProps {
+	var projection1 = grains.RegisterProjection(server, "projection1", func() grains.ProjectionProps[*projections.Projection1State] {
 
-		return NewSubscriptionProps(4, conn, "subscription_master")
+		return &projections.Projection1Props{}
+	})
+
+	_projections = append(_projections, projection1)
+
+	grains.RegisterStreamSubscription(server, "stream", func() grains.SubscriptionProps {
+
+		return NewSubscriptionProps(4, conn)
 	})
 
 	err = server.Start()
@@ -61,7 +73,7 @@ func main() {
 	defer server.Shutdown(true)
 
 	// start a single instance of the master subscriber
-	err = server.GetGrain("grp1", "subscription_master")
+	_, err = server.GetGrain("v1", "stream")
 	if err != nil {
 		fmt.Printf("spawn grain error: %v\n", err)
 		return
@@ -78,37 +90,32 @@ func main() {
 	cancel()
 }
 
-func NewSubscriptionProps(bufferSize uint32, conn *esdb.Connection, groupId string) grains.SubscriptionProps {
-
-	var stream = conn.NewStreamStore(groupId, bufferSize)
+func NewSubscriptionProps(bufferSize uint32, conn *esdb.Connection) grains.SubscriptionProps {
 
 	return &SubscriptionProps{
-		bufferSize:  bufferSize,
-		conn:        conn,
-		groupId:     groupId,
-		offsetStore: conn.NewOffsetStore(stream),
-		stream:      stream,
+		bufferSize: bufferSize,
+		conn:       conn,
 	}
 }
 
 type SubscriptionProps struct {
 	bufferSize  uint32
 	conn        *esdb.Connection
-	groupId     string
 	offsetStore offset.Store
 	stream      stream.Store
 }
 
+func (p *SubscriptionProps) GrainTimeout() time.Duration { return 0 }
 func (*SubscriptionProps) HandlerTimeout() time.Duration { return 30 * time.Second }
-func (p *SubscriptionProps) Init()                       {}
-func (p *SubscriptionProps) GrainTimeout() time.Duration { return 5 * time.Minute }
-func (p *SubscriptionProps) GroupId() string             { return p.groupId }
-func (*SubscriptionProps) Log(text string)               { fmt.Println(text) }
-func (p *SubscriptionProps) OffsetStore() offset.Store   { return p.offsetStore }
-func (p *SubscriptionProps) ProjectionGrainsFor(event any) []grains.ProjectionAddress {
+func (p *SubscriptionProps) Init(subscriptionId string) {
 
-	// TODO:
-	return nil
+	var stream = p.conn.NewStreamStore(subscriptionId, p.bufferSize)
+
+	p.stream = stream
+	p.offsetStore = p.conn.NewOffsetStore(stream)
 }
-func (p *SubscriptionProps) Stream() stream.Store { return p.stream }
-func (p *SubscriptionProps) Terminate()           {}
+func (*SubscriptionProps) Log(text string)                     { fmt.Println(text) }
+func (p *SubscriptionProps) OffsetStore() offset.Store         { return p.offsetStore }
+func (p *SubscriptionProps) Projections() []*grains.Projection { return _projections }
+func (p *SubscriptionProps) Stream() stream.Store              { return p.stream }
+func (p *SubscriptionProps) Terminate()                        {}

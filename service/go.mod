@@ -19,6 +19,7 @@ replace github.com/itgram/tracking_domain => ../domain
 replace github.com/itgram/tracking_service => ./
 
 require (
+	github.com/itgram/green v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.encoding v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.encoding.protobuf v0.0.0-00010101000000-000000000000
 	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000
@@ -51,7 +52,6 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.8 // indirect
-	github.com/itgram/green v0.0.0-00010101000000-000000000000 // indirect
 	github.com/lithammer/shortuuid/v4 v4.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
