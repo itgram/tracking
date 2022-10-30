@@ -15,13 +15,13 @@ import (
 	"github.com/itgram/green.persistence/persistence/flow/offset"
 	"github.com/itgram/green.persistence/persistence/flow/stream"
 	"github.com/itgram/green.system/system"
-	"github.com/itgram/green.system/system/grains"
+	"github.com/itgram/green.system/system/actors"
 
 	"github.com/itgram/tracking_projection/projections"
 	_ "github.com/itgram/tracking_projection/vehicle"
 )
 
-var _projections []*grains.Projection
+var _projections []*actors.Projection
 
 func main() {
 
@@ -52,14 +52,14 @@ func main() {
 	var server = system.NewServer(
 		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
 
-	var projection1 = grains.RegisterProjection(server, "projection1", func() grains.ProjectionProps[*projections.Projection1State] {
+	var projection1 = actors.RegisterProjection(server, "projection1", func() actors.ProjectionProps[*projections.Projection1State] {
 
 		return &projections.Projection1Props{}
 	})
 
 	_projections = append(_projections, projection1)
 
-	grains.RegisterStreamSubscription(server, "stream", func() grains.SubscriptionProps {
+	actors.RegisterStreamSubscription(server, "stream", func() actors.SubscriptionProps {
 
 		return NewSubscriptionProps(4, conn)
 	})
@@ -73,9 +73,9 @@ func main() {
 	defer server.Shutdown(true)
 
 	// start a single instance of the master subscriber
-	_, err = server.GetGrain("v1", "stream")
+	_, err = server.GetActor("v1", "stream")
 	if err != nil {
-		fmt.Printf("spawn grain error: %v\n", err)
+		fmt.Printf("spawn actor error: %v\n", err)
 		return
 	}
 
@@ -90,7 +90,7 @@ func main() {
 	cancel()
 }
 
-func NewSubscriptionProps(bufferSize uint32, conn *esdb.Connection) grains.SubscriptionProps {
+func NewSubscriptionProps(bufferSize uint32, conn *esdb.Connection) actors.SubscriptionProps {
 
 	return &SubscriptionProps{
 		bufferSize: bufferSize,
@@ -105,7 +105,7 @@ type SubscriptionProps struct {
 	stream      stream.Store
 }
 
-func (p *SubscriptionProps) GrainTimeout() time.Duration { return 0 }
+func (p *SubscriptionProps) ActorTimeout() time.Duration { return 0 }
 func (*SubscriptionProps) HandlerTimeout() time.Duration { return 30 * time.Second }
 func (p *SubscriptionProps) Init(subscriptionId string) {
 
@@ -116,6 +116,6 @@ func (p *SubscriptionProps) Init(subscriptionId string) {
 }
 func (*SubscriptionProps) Log(text string)                     { fmt.Println(text) }
 func (p *SubscriptionProps) OffsetStore() offset.Store         { return p.offsetStore }
-func (p *SubscriptionProps) Projections() []*grains.Projection { return _projections }
+func (p *SubscriptionProps) Projections() []*actors.Projection { return _projections }
 func (p *SubscriptionProps) Stream() stream.Store              { return p.stream }
 func (p *SubscriptionProps) Terminate()                        {}

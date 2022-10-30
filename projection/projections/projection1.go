@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/itgram/green.system/system/grains"
+	"github.com/itgram/green.system/system/actors"
 
 	"github.com/itgram/tracking_projection/vehicle"
 )
@@ -17,7 +17,7 @@ type Projection1State struct {
 
 type Projection1Props struct{}
 
-func (p *Projection1Props) GrainIdentity(event any) (string, bool) {
+func (p *Projection1Props) ActorIdentity(event any) (string, bool) {
 
 	switch e := event.(type) {
 
@@ -31,8 +31,8 @@ func (p *Projection1Props) GrainIdentity(event any) (string, bool) {
 	return "", false
 }
 
-func (p *Projection1Props) GrainTimeout() time.Duration { return 5 * time.Minute }
-func (p *Projection1Props) Handler() grains.ProjectionHandler[*Projection1State] {
+func (p *Projection1Props) ActorTimeout() time.Duration { return 5 * time.Minute }
+func (p *Projection1Props) Handler() actors.ProjectionHandler[*Projection1State] {
 	return &projection1Handler{}
 }
 func (p *Projection1Props) HandlerTimeout() time.Duration { return 15 * time.Second }
@@ -48,7 +48,7 @@ func (p *Projection1Props) Terminate()                    {}
 
 type projection1Handler struct{}
 
-func (p *projection1Handler) Handle(ctx *grains.ProjectionContext[*Projection1State], event any) error {
+func (p *projection1Handler) Handle(ctx *actors.ProjectionContext[*Projection1State], event any) error {
 
 	fmt.Println("Projection 1 Handler: AggregateId", ctx.AggregateId())
 	fmt.Println("Projection 1 Handler Revision:", ctx.Revision())

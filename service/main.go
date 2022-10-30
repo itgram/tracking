@@ -12,7 +12,7 @@ import (
 	"github.com/itgram/green.encoding/encoding"
 	"github.com/itgram/green.persistence.esdb/esdb"
 	"github.com/itgram/green.system/system"
-	"github.com/itgram/green.system/system/grains"
+	"github.com/itgram/green.system/system/actors"
 	"github.com/itgram/tracking_domain/vehicle"
 
 	v "github.com/itgram/tracking_service/vehicle"
@@ -47,7 +47,7 @@ func main() {
 	var server = system.NewServer(
 		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
 
-	grains.RegisterCommandHandler(server, "vehicle", func(kind string) grains.AggregateProps[*vehicle.State] { return v.NewAggregateProps(kind, conn) })
+	actors.RegisterCommandHandler(server, "vehicle", func(kind string) actors.AggregateProps[*vehicle.State] { return v.NewAggregateProps(kind, conn) })
 
 	err = server.Start()
 	if err != nil {

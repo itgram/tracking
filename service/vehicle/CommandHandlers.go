@@ -8,7 +8,7 @@ import (
 	"github.com/itgram/green.persistence.esdb/esdb"
 	"github.com/itgram/green.persistence/persistence"
 	"github.com/itgram/green.persistence/persistence/aggregate/snapshot/strategy"
-	"github.com/itgram/green.system/system/grains"
+	"github.com/itgram/green.system/system/actors"
 	"github.com/itgram/green/aggregate"
 
 	"github.com/itgram/tracking_domain/vehicle"
@@ -16,7 +16,7 @@ import (
 
 type commandHandler struct{}
 
-func (*commandHandler) Handle(ctx *grains.CommandContext[*vehicle.State], command any) (aggregate.Result[*vehicle.State], error) {
+func (*commandHandler) Handle(ctx *actors.CommandContext[*vehicle.State], command any) (aggregate.Result[*vehicle.State], error) {
 
 	switch cmd := command.(type) {
 
@@ -54,15 +54,15 @@ func (*commandHandler) Handle(ctx *grains.CommandContext[*vehicle.State], comman
 	}
 }
 
-func NewAggregateProps(kind string, conn *esdb.Connection) grains.AggregateProps[*vehicle.State] {
+func NewAggregateProps(kind string, conn *esdb.Connection) actors.AggregateProps[*vehicle.State] {
 
 	return &aggregateProps{
 		handler:        &commandHandler{},
 		handlerTimeout: 30 * time.Second,
 		loadingTimeout: 30 * time.Second,
 		repository: persistence.NewRepository(
-			conn.NewJournalStore(3, func(aggregateId string) string { return kind + "/" + aggregateId }),
-			conn.NewSnapshotStore(2, func(aggregateId string) string { return kind + "/" + aggregateId }),
+			conn.NewJournalStore(kind, 3),
+			conn.NewSnapshotStore(kind, 2),
 			&vehicle.State{},
 		),
 		strategy: strategy.NewSnapshotStrategy(
@@ -71,20 +71,20 @@ func NewAggregateProps(kind string, conn *esdb.Connection) grains.AggregateProps
 }
 
 type aggregateProps struct {
-	handler        grains.CommandHandler[*vehicle.State]
+	handler        actors.CommandHandler[*vehicle.State]
 	handlerTimeout time.Duration
 	loadingTimeout time.Duration
 	repository     persistence.Repository[*vehicle.State]
 	strategy       strategy.Strategy
 }
 
-func (p *aggregateProps) Handler() grains.CommandHandler[*vehicle.State] { return p.handler }
+func (p *aggregateProps) Handler() actors.CommandHandler[*vehicle.State] { return p.handler }
 func (p *aggregateProps) HandlerTimeout() time.Duration                  { return p.handlerTimeout }
 func (p *aggregateProps) LoadingTimeout() time.Duration                  { return p.loadingTimeout }
 func (p *aggregateProps) Init() {
 	fmt.Println("------- Init aggregate")
 }
-func (p *aggregateProps) GrainTimeout() time.Duration                        { return 1 * time.Minute }
+func (p *aggregateProps) ActorTimeout() time.Duration                        { return 1 * time.Minute }
 func (p *aggregateProps) Log(aggregateId, text string)                       { fmt.Println(aggregateId, text) }
 func (p *aggregateProps) PartitionSize() uint64                              { return 4 }
 func (p *aggregateProps) Repository() persistence.Repository[*vehicle.State] { return p.repository }
