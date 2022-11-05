@@ -5,18 +5,41 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/itgram/green.fabric/fabric/command"
 	"github.com/itgram/green.persistence.esdb/esdb"
 	"github.com/itgram/green.persistence/persistence"
 	"github.com/itgram/green.persistence/persistence/aggregate/snapshot/strategy"
-	"github.com/itgram/green.system/system/actors"
 	"github.com/itgram/green/aggregate"
 
 	"github.com/itgram/tracking_domain/vehicle"
 )
 
-type commandHandler struct{}
+func NewAggregateProps(kind string, conn *esdb.Connection) command.AggregateProps[*vehicle.State] {
 
-func (*commandHandler) Handle(ctx *actors.CommandContext[*vehicle.State], command any) (aggregate.Result[*vehicle.State], error) {
+	return &aggregateProps{
+		handlerTimeout: 30 * time.Second,
+		loadingTimeout: 30 * time.Second,
+		repository: persistence.NewRepository(
+			conn.NewJournalStore(kind, 3),
+			conn.NewSnapshotStore(kind, 2),
+			&vehicle.State{},
+		),
+		strategy: strategy.NewSnapshotStrategy(
+			strategy.WithMaxEventCount(4)),
+	}
+}
+
+type aggregateProps struct {
+	handlerTimeout time.Duration
+	loadingTimeout time.Duration
+	repository     persistence.Repository[*vehicle.State]
+	strategy       strategy.Strategy
+}
+
+func (p *aggregateProps) AggregateTTL(ctx command.AggregateContext) time.Duration {
+	return 1 * time.Minute
+}
+func (*aggregateProps) Handle(ctx command.CommandContext[*vehicle.State], command any) (aggregate.Result[*vehicle.State], error) {
 
 	switch cmd := command.(type) {
 
@@ -53,42 +76,24 @@ func (*commandHandler) Handle(ctx *actors.CommandContext[*vehicle.State], comman
 		return nil, errors.New("unknown command received")
 	}
 }
-
-func NewAggregateProps(kind string, conn *esdb.Connection) actors.AggregateProps[*vehicle.State] {
-
-	return &aggregateProps{
-		handler:        &commandHandler{},
-		handlerTimeout: 30 * time.Second,
-		loadingTimeout: 30 * time.Second,
-		repository: persistence.NewRepository(
-			conn.NewJournalStore(kind, 3),
-			conn.NewSnapshotStore(kind, 2),
-			&vehicle.State{},
-		),
-		strategy: strategy.NewSnapshotStrategy(
-			strategy.WithMaxEventCount(4)),
-	}
+func (p *aggregateProps) HandleFailure(ctx command.AggregateContext, error string) {
+	fmt.Println(ctx.AggregateId(), error)
 }
-
-type aggregateProps struct {
-	handler        actors.CommandHandler[*vehicle.State]
-	handlerTimeout time.Duration
-	loadingTimeout time.Duration
-	repository     persistence.Repository[*vehicle.State]
-	strategy       strategy.Strategy
+func (p *aggregateProps) HandlerTimeout(ctx command.AggregateContext) time.Duration {
+	return p.handlerTimeout
 }
-
-func (p *aggregateProps) Handler() actors.CommandHandler[*vehicle.State] { return p.handler }
-func (p *aggregateProps) HandlerTimeout() time.Duration                  { return p.handlerTimeout }
-func (p *aggregateProps) LoadingTimeout() time.Duration                  { return p.loadingTimeout }
-func (p *aggregateProps) Init() {
+func (p *aggregateProps) Init(ctx command.AggregateContext) {
 	fmt.Println("------- Init aggregate")
 }
-func (p *aggregateProps) ActorTimeout() time.Duration                        { return 1 * time.Minute }
-func (p *aggregateProps) Log(aggregateId, text string)                       { fmt.Println(aggregateId, text) }
-func (p *aggregateProps) PartitionSize() uint64                              { return 4 }
-func (p *aggregateProps) Repository() persistence.Repository[*vehicle.State] { return p.repository }
-func (p *aggregateProps) Strategy() strategy.Strategy                        { return p.strategy }
-func (p *aggregateProps) Terminate() {
+func (p *aggregateProps) LoadingTimeout(ctx command.AggregateContext) time.Duration {
+	return p.loadingTimeout
+}
+func (p *aggregateProps) PartitionSize(ctx command.AggregateContext) uint64 { return 4 }
+
+func (p *aggregateProps) Repository(ctx command.AggregateContext) persistence.Repository[*vehicle.State] {
+	return p.repository
+}
+func (p *aggregateProps) Strategy(ctx command.AggregateContext) strategy.Strategy { return p.strategy }
+func (p *aggregateProps) Terminate(ctx command.AggregateContext) {
 	fmt.Println("------- Terminate aggregate")
 }

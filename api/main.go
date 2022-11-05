@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/itgram/green.system/system"
+	"github.com/itgram/green.fabric/fabric"
 
 	"github.com/itgram/tracking_api/commands/vehicle"
 )
@@ -19,8 +19,8 @@ func main() {
 	var _, cancel = context.WithCancel(
 		context.Background())
 
-	var client = system.NewClient(
-		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
+	var client = fabric.NewClient(
+		fabric.NewNodeConfigurtion("localhost", "my_cluster", 0, fabric.ConsulProvider))
 
 	var err = client.Start()
 	if err != nil {

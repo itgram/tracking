@@ -10,9 +10,9 @@ import (
 	"github.com/itgram/green.encoding.protobuf/json"
 	"github.com/itgram/green.encoding.protobuf/protobuf"
 	"github.com/itgram/green.encoding/encoding"
+	"github.com/itgram/green.fabric/fabric"
+	"github.com/itgram/green.fabric/fabric/command"
 	"github.com/itgram/green.persistence.esdb/esdb"
-	"github.com/itgram/green.system/system"
-	"github.com/itgram/green.system/system/actors"
 	"github.com/itgram/tracking_domain/vehicle"
 
 	v "github.com/itgram/tracking_service/vehicle"
@@ -44,12 +44,15 @@ func main() {
 
 	defer conn.Close()
 
-	var server = system.NewServer(
-		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
+	var server = fabric.NewServer(
+		fabric.NewNodeConfigurtion("localhost", "my_cluster", 0, fabric.ConsulProvider))
 
-	actors.RegisterCommandHandler(server, "vehicle", func(kind string) actors.AggregateProps[*vehicle.State] { return v.NewAggregateProps(kind, conn) })
+	var kinds []fabric.ActorKind
 
-	err = server.Start()
+	kinds = append(kinds,
+		command.NewAggregateActorKind("vehicle", func(kind string) command.AggregateProps[*vehicle.State] { return v.NewAggregateProps(kind, conn) }))
+
+	err = server.Start(kinds...)
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		return

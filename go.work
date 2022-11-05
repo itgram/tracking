@@ -10,7 +10,7 @@ use ../green.persistence
 
 use ../green.persistence.esdb
 
-use ../green.system
+use ../green.fabric
 
 use ./api
 

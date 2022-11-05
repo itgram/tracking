@@ -11,17 +11,17 @@ import (
 	"github.com/itgram/green.encoding.protobuf/json"
 	"github.com/itgram/green.encoding.protobuf/protobuf"
 	"github.com/itgram/green.encoding/encoding"
+	"github.com/itgram/green.fabric/fabric"
+	"github.com/itgram/green.fabric/fabric/consumer"
 	"github.com/itgram/green.persistence.esdb/esdb"
 	"github.com/itgram/green.persistence/persistence/flow/offset"
 	"github.com/itgram/green.persistence/persistence/flow/stream"
-	"github.com/itgram/green.system/system"
-	"github.com/itgram/green.system/system/actors"
 
 	"github.com/itgram/tracking_projection/projections"
 	_ "github.com/itgram/tracking_projection/vehicle"
 )
 
-var _projections []*actors.Projection
+var _projections []*consumer.Projection
 
 func main() {
 
@@ -49,22 +49,27 @@ func main() {
 
 	defer conn.Close()
 
-	var server = system.NewServer(
-		system.NewNodeConfigurtion("localhost", "my_cluster", 0))
+	var server = fabric.NewServer(
+		fabric.NewNodeConfigurtion("localhost", "my_cluster", 0, fabric.ConsulProvider))
 
-	var projection1 = actors.RegisterProjection(server, "projection1", func() actors.ProjectionProps[*projections.Projection1State] {
+	var kinds []fabric.ActorKind
+
+	var projection1 = consumer.NewProjectionActorKind("projection1", func(kind string, identityOnly bool) consumer.ProjectionProps[*projections.Projection1State] {
 
 		return &projections.Projection1Props{}
 	})
 
+	kinds = append(kinds, projection1.Kind())
+
 	_projections = append(_projections, projection1)
 
-	actors.RegisterStreamSubscription(server, "stream", func() actors.SubscriptionProps {
+	kinds = append(kinds,
+		consumer.NewSubscriptionActorKind("stream", func(kind string) consumer.SubscriptionProps {
 
-		return NewSubscriptionProps(4, conn)
-	})
+			return NewSubscriptionProps(4, conn, server)
+		}))
 
-	err = server.Start()
+	err = server.Start(kinds...)
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		return
@@ -90,11 +95,12 @@ func main() {
 	cancel()
 }
 
-func NewSubscriptionProps(bufferSize uint32, conn *esdb.Connection) actors.SubscriptionProps {
+func NewSubscriptionProps(bufferSize uint32, conn *esdb.Connection, server *fabric.Server) consumer.SubscriptionProps {
 
 	return &SubscriptionProps{
 		bufferSize: bufferSize,
 		conn:       conn,
+		server:     server,
 	}
 }
 
@@ -102,20 +108,38 @@ type SubscriptionProps struct {
 	bufferSize  uint32
 	conn        *esdb.Connection
 	offsetStore offset.Store
+	server      *fabric.Server
 	stream      stream.Store
 }
 
-func (p *SubscriptionProps) ActorTimeout() time.Duration { return 0 }
-func (*SubscriptionProps) HandlerTimeout() time.Duration { return 30 * time.Second }
-func (p *SubscriptionProps) Init(subscriptionId string) {
+func (*SubscriptionProps) HandleFailure(ctx consumer.SubscriptionContext, error string) {
+	fmt.Println(error)
+}
+func (*SubscriptionProps) HandlerTimeout(ctx consumer.SubscriptionContext) time.Duration {
+	return 30 * time.Second
+}
+func (p *SubscriptionProps) Init(ctx consumer.SubscriptionContext) {
 
-	var stream = p.conn.NewStreamStore(subscriptionId, p.bufferSize)
+	var stream = p.conn.NewStreamStore(ctx.SubscriptionId(), p.bufferSize)
 
 	p.stream = stream
 	p.offsetStore = p.conn.NewOffsetStore(stream)
 }
-func (*SubscriptionProps) Log(text string)                     { fmt.Println(text) }
-func (p *SubscriptionProps) OffsetStore() offset.Store         { return p.offsetStore }
-func (p *SubscriptionProps) Projections() []*actors.Projection { return _projections }
-func (p *SubscriptionProps) Stream() stream.Store              { return p.stream }
-func (p *SubscriptionProps) Terminate()                        {}
+func (p *SubscriptionProps) OffsetStore(ctx consumer.SubscriptionContext) offset.Store {
+	return p.offsetStore
+}
+func (p *SubscriptionProps) Projections(ctx consumer.SubscriptionContext) []*consumer.Projection {
+	return _projections
+}
+func (p *SubscriptionProps) Request(ctx consumer.SubscriptionContext, identity, kind string, message any, timeout time.Duration) (any, error) {
+
+	return p.server.Request(identity, kind, message, timeout)
+}
+
+func (p *SubscriptionProps) Stream(ctx consumer.SubscriptionContext) stream.Store           { return p.stream }
+func (p *SubscriptionProps) SubscriptionTTL(ctx consumer.SubscriptionContext) time.Duration { return 0 }
+func (p *SubscriptionProps) Terminate(ctx consumer.SubscriptionContext) {
+
+	fmt.Println(">>> subscription terminated")
+	// TODO: restart again a new virtual actor
+}
