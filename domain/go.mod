@@ -1,10 +1,9 @@
-module github.com/itgram/tracking_domain
+module github.com/itgram/tracking/domain
 
 go 1.19
 
-replace github.com/itgram/green => ../../green
-
 require (
-	github.com/itgram/green v0.0.0-00010101000000-000000000000
+	github.com/itgram/green v0.1.0
 	google.golang.org/protobuf v1.28.1
+
 )

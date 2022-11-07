@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/itgram/green.fabric/fabric"
 
-	"github.com/itgram/tracking_api/commands/vehicle"
+	"github.com/itgram/tracking/api/commands/vehicle"
 )
 
 func main() {

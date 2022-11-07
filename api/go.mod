@@ -1,16 +1,10 @@
-module github.com/itgram/tracking_api
+module github.com/itgram/tracking/api
 
 go 1.19
 
-replace github.com/itgram/green => ../../green
-
-replace github.com/itgram/green.persistence => ../../green.persistence
-
-replace github.com/itgram/green.fabric => ../../green.fabric
-
 require (
 	github.com/google/uuid v1.3.0
-	github.com/itgram/green.fabric v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.fabric v0.1.0
 	google.golang.org/protobuf v1.28.1
 )
 
@@ -41,8 +35,8 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.8 // indirect
-	github.com/itgram/green v0.0.0-00010101000000-000000000000 // indirect
-	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000 // indirect
+	github.com/itgram/green v0.1.0 // indirect
+	github.com/itgram/green.persistence v0.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect

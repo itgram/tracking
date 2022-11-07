@@ -13,9 +13,9 @@ import (
 	"github.com/itgram/green.fabric/fabric"
 	"github.com/itgram/green.fabric/fabric/command"
 	"github.com/itgram/green.persistence.esdb/esdb"
-	"github.com/itgram/tracking_domain/vehicle"
+	"github.com/itgram/tracking/domain/vehicle"
 
-	v "github.com/itgram/tracking_service/vehicle"
+	v "github.com/itgram/tracking/service/vehicle"
 )
 
 func main() {

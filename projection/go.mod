@@ -1,27 +1,13 @@
-module github.com/itgram/tracking_projection
+module github.com/itgram/tracking/projection
 
 go 1.19
 
-replace github.com/itgram/green => ../../green
-
-replace github.com/itgram/green.encoding => ../../green.encoding
-
-replace github.com/itgram/green.encoding.protobuf => ../../green.encoding.protobuf
-
-replace github.com/itgram/green.persistence => ../../green.persistence
-
-replace github.com/itgram/green.persistence.esdb => ../../green.persistence.esdb
-
-replace github.com/itgram/green.fabric => ../../green.fabric
-
-replace github.com/itgram/tracking_projection => ./
-
 require (
-	github.com/itgram/green.encoding v0.0.0-00010101000000-000000000000
-	github.com/itgram/green.encoding.protobuf v0.0.0-00010101000000-000000000000
-	github.com/itgram/green.fabric v0.0.0-00010101000000-000000000000
-	github.com/itgram/green.persistence v0.0.0-00010101000000-000000000000
-	github.com/itgram/green.persistence.esdb v0.0.0-00010101000000-000000000000
+	github.com/itgram/green.encoding v0.1.0
+	github.com/itgram/green.encoding.protobuf v0.1.0
+	github.com/itgram/green.fabric v0.1.0
+	github.com/itgram/green.persistence v0.1.0
+	github.com/itgram/green.persistence.esdb v0.1.0
 	google.golang.org/protobuf v1.28.1
 )
 
@@ -55,7 +41,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.8 // indirect
-	github.com/itgram/green v0.0.0-00010101000000-000000000000 // indirect
+	github.com/itgram/green v0.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect

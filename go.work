@@ -1,21 +1,17 @@
 go 1.19
 
-use ../green
+use (
+	../library/green
+	../library/green.encoding
+	../library/green.encoding.protobuf
+	../library/green.fabric
+	../library/green.persistence
+	../library/green.persistence.esdb
+)
 
-use ../green.encoding
-
-use ../green.encoding.protobuf
-
-use ../green.persistence
-
-use ../green.persistence.esdb
-
-use ../green.fabric
-
-use ./api
-
-use ./domain
-
-use ./projection
-
-use ./service
+use (
+	./api
+	./domain
+	./projection
+	./service
+)

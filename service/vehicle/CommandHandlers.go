@@ -11,7 +11,7 @@ import (
 	"github.com/itgram/green.persistence/persistence/aggregate/snapshot/strategy"
 	"github.com/itgram/green/aggregate"
 
-	"github.com/itgram/tracking_domain/vehicle"
+	"github.com/itgram/tracking/domain/vehicle"
 )
 
 func NewAggregateProps(kind string, conn *esdb.Connection) command.AggregateProps[*vehicle.State] {

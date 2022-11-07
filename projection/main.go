@@ -17,8 +17,8 @@ import (
 	"github.com/itgram/green.persistence/persistence/flow/offset"
 	"github.com/itgram/green.persistence/persistence/flow/stream"
 
-	"github.com/itgram/tracking_projection/projections"
-	_ "github.com/itgram/tracking_projection/vehicle"
+	"github.com/itgram/tracking/projection/projections"
+	_ "github.com/itgram/tracking/projection/vehicle"
 )
 
 var _projections []*consumer.Projection

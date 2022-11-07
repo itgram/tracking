@@ -7,7 +7,7 @@ import (
 
 	"github.com/itgram/green.fabric/fabric/consumer"
 
-	"github.com/itgram/tracking_projection/vehicle"
+	"github.com/itgram/tracking/projection/vehicle"
 )
 
 type Projection1State struct {
