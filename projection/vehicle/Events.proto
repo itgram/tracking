@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package itgram.tracking.projection.vehicle;
+package itgram.tracking.domain.vehicle;
 
 option go_package = "github.com/itgram/tracking/projection/vehicle";
 
