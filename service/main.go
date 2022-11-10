@@ -13,19 +13,30 @@ import (
 	"github.com/itgram/green.fabric/fabric"
 	"github.com/itgram/green.fabric/fabric/command"
 	"github.com/itgram/green.persistence.esdb/esdb"
+	"github.com/itgram/green/config"
 	"github.com/itgram/tracking/domain/vehicle"
 
+	"github.com/itgram/tracking/service/src"
 	v "github.com/itgram/tracking/service/vehicle"
 )
 
 func main() {
 
-	var _, cancel = context.WithCancel(
+	var ctx, cancel = context.WithCancel(
 		context.Background())
 
+	// load the application configuration
+	var cfg = src.NewConfiguration()
+
+	var err = config.LoadFrom(ctx, "local.env", cfg)
+	if err != nil {
+		fmt.Printf("Error failed to load the configuration: %v\n", err)
+		return
+	}
+
 	conn := esdb.NewConnection(
-		"esdb://127.0.0.1:2113?tls=false",
-		esdb.WithAuthentication("admin", "changeit"),
+		cfg.EventStore.Address,
+		esdb.WithAuthentication(cfg.EventStore.Username, cfg.EventStore.Password),
 		esdb.WithSerialization("json", func(encoding string) encoding.Serializer {
 
 			if encoding == "json" {
@@ -36,7 +47,7 @@ func main() {
 		}),
 	)
 
-	var err = conn.Connect()
+	err = conn.Connect()
 	if err != nil {
 		fmt.Printf("Error to connect to tracking database: %v\n", err)
 		return
