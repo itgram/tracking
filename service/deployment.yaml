@@ -1,0 +1,33 @@
+# kubectl apply -f deployment.yaml
+# kubectl get pods
+# kubectl logs -f service-765756756
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: my-service
+
+  labels:
+    app: service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: my-service
+
+  template:
+    metadata:
+      labels:
+        app: my-service
+
+    spec:
+      containers:
+        - name: app
+          image: bluemill/service
+          env:
+            - name: PING_URLS
+              value: klklkl
+          ports:
+            - containerPort: 80
