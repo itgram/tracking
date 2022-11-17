@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/itgram/green.fabric/fabric"
+
+	"github.com/WhatsLab/grain.fabric/fabric"
 
 	"github.com/itgram/tracking/api/commands/vehicle"
 )

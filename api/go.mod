@@ -3,12 +3,14 @@ module github.com/itgram/tracking/api
 go 1.19
 
 require (
+	github.com/WhatsLab/grain.fabric v0.1.0
 	github.com/google/uuid v1.3.0
-	github.com/itgram/green.fabric v0.1.0
 	google.golang.org/protobuf v1.28.1
 )
 
 require (
+	github.com/WhatsLab/grain v0.1.0 // indirect
+	github.com/WhatsLab/grain.persistence v0.1.0 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
 	github.com/asynkron/gofun v0.0.0-20220329210725-34fed760f4c2 // indirect
@@ -35,8 +37,6 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.8 // indirect
-	github.com/itgram/green v0.1.0 // indirect
-	github.com/itgram/green.persistence v0.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect

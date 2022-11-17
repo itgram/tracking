@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/itgram/green.fabric/fabric/command"
-	"github.com/itgram/green.persistence.esdb/esdb"
-	"github.com/itgram/green.persistence/persistence"
-	"github.com/itgram/green.persistence/persistence/aggregate/snapshot/strategy"
-	"github.com/itgram/green/aggregate"
+	"github.com/WhatsLab/grain.fabric/fabric/command"
+	"github.com/WhatsLab/grain.persistence.esdb/esdb"
+	"github.com/WhatsLab/grain.persistence/persistence"
+	"github.com/WhatsLab/grain.persistence/persistence/aggregate/snapshot/strategy"
+	"github.com/WhatsLab/grain/aggregate"
 
 	"github.com/itgram/tracking/domain/vehicle"
 )

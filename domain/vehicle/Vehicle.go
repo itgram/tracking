@@ -3,7 +3,7 @@ package vehicle
 import (
 	"errors"
 
-	"github.com/itgram/green/aggregate"
+	"github.com/WhatsLab/grain/aggregate"
 )
 
 type Result = aggregate.Result[*State]
