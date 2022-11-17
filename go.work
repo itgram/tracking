@@ -1,12 +1,12 @@
 go 1.19
 
 use (
-	../library/green
-	../library/green.encoding
-	../library/green.encoding.protobuf
-	../library/green.fabric
-	../library/green.persistence
-	../library/green.persistence.esdb
+	../library/grain
+	../library/grain.encoding
+	../library/grain.encoding.protobuf
+	../library/grain.fabric
+	../library/grain.persistence
+	../library/grain.persistence.esdb
 )
 
 use (

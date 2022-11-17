@@ -7,15 +7,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/itgram/green.encoding.protobuf/json"
-	"github.com/itgram/green.encoding.protobuf/protobuf"
-	"github.com/itgram/green.encoding/encoding"
-	"github.com/itgram/green.fabric/fabric"
-	"github.com/itgram/green.fabric/fabric/command"
-	"github.com/itgram/green.persistence.esdb/esdb"
-	"github.com/itgram/green/config"
-	"github.com/itgram/tracking/domain/vehicle"
+	"github.com/WhatsLab/grain.encoding.protobuf/json"
+	"github.com/WhatsLab/grain.encoding.protobuf/protobuf"
+	"github.com/WhatsLab/grain.encoding/encoding"
+	"github.com/WhatsLab/grain.fabric/fabric"
+	"github.com/WhatsLab/grain.fabric/fabric/command"
+	"github.com/WhatsLab/grain.persistence.esdb/esdb"
+	"github.com/WhatsLab/grain/config"
 
+	"github.com/itgram/tracking/domain/vehicle"
 	"github.com/itgram/tracking/service/src"
 	v "github.com/itgram/tracking/service/vehicle"
 )
@@ -28,6 +28,9 @@ func main() {
 	// load the application configuration
 	var cfg = src.NewConfiguration()
 
+	// TODO: load from config file in debug mode only, using compiler ldflags
+	// https://stackoverflow.com/questions/38950909/c-style-conditional-compilation-in-golang
+	// go build -tags debug
 	var err = config.LoadFrom(ctx, "local.env", cfg)
 	if err != nil {
 		fmt.Printf("Error failed to load the configuration: %v\n", err)

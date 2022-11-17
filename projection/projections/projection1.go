@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/itgram/green.fabric/fabric/consumer"
+	"github.com/WhatsLab/grain.fabric/fabric/consumer"
 
 	"github.com/itgram/tracking/projection/vehicle"
 )
